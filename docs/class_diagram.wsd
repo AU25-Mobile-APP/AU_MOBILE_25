@@ -1,0 +1,229 @@
+@startuml
+skinparam linetype ortho
+hide empty members
+'skinparam groupInheritance 2
+
+
+/'data models'/
+namespace SwipeFeast.API.Models {
+
+    /'Domain Model REstaurant'/
+    class Restaurant<<(D,orchid)>>{
+        +string Id {get; set;}
+        +string Name {get; set;}
+        +string Description {get; set;}
+        +float Rating {get; set;}
+        +List<Filter> Suitable {get; set;}
+        +string NavigationUrl {get; set;}
+        +List<string> PhotoUrls {get; set;}
+    }
+
+
+    /'Domain Model Filter'/
+    class Filter<<(D,orchid)>>{
+        +string Id {get; set;}
+        +bool Active {get; set;}
+    }
+
+    /'Domain Model Group'/
+    class Group<<(D,orchid)>>{
+        +Guid Id {get; set;}
+        +int JoinCode {get; set;}
+        +string Name {get; set;}
+        +double Latitude {get; set;}
+        +double Longitude {get; set;}
+        +int LocationRange {get; set;}
+        +List<Filter> Filters {get; set;}
+        +List<Ranking> Rankings {get; set;}
+        +List<Restaurant> Restaurants {get; set;}
+        +List<Guid> Members {get; set;}
+        +DateTime ExpirationDate {get; set;}
+    }
+
+    /'Domain Model Ranking'/
+    class Ranking<<(D,orchid)>>{
+        +string RestaurantId {get;set;}
+        +string RestaurantName {get;set;}
+        +int LikesCount {get; set;}
+        +List<Guid> Members {get; set;}
+    }
+
+    Group ..> Filter
+    Group ..> Ranking
+    Group ..> Restaurant
+
+
+    /'Data Transfer Object for Group Creation'/
+    class GroupCreationDto<<(D,#FF7700)>> {
+        +string Name {get; set;}
+        +double Latitude {get; set;}
+        +double Longitude {get; set;}
+        +int LocationRange {get; set;}
+        +List<Filter> Filters {get; set;}
+    }
+
+    /'Extends GroupCreationDto'/
+    class GroupExistingDto<<(D,#FF7700)>> extends GroupCreationDto{
+        +DataTime ExpirationDate {get; set;}
+        +int JoinCode {get; set;}
+     }
+
+    GroupCreationDto ..> Filter
+    /'data model from google API'/
+    class GooglePlaces<<(D,orchid)>>{
+        + GoogleRestaurant[] places {get; set;}
+    }
+
+    class GoogleRestaurant<<(D,orchid)>>{
+        +string id {get; set;}
+        +GoogleLocation location {get; set;}
+        +List<string> types {get; set;}
+        +float rating {get; set;}
+        +GoogleDisplayName displayName {get; set;}
+        +string GoogleMapsUri {get; set;}
+        +EditorialSummary editorialSummary {get; set;}
+        +List<GooglePhotoId> photos {get; set;}
+    }
+
+    class GoogleLocation<<(D,orchid)>>{
+        + double latitude {get; set;}
+        + double longitude {get; set;}
+    }
+
+    class GoogleDisplayName<<(D,orchid)>>{
+        +string text {get; set;}
+        +string languageCode {get; set;}
+    }
+
+    class EditorialSummary<<(D,orchid)>>{
+        +string text {get; set;}
+        +string languageCode {get; set;}
+    }
+
+    class GooglePhotoId<<(D,orchid)>>{
+        +string name {get; set;}
+        +int widthPx {get; set;}
+        +int heightPx {get; set;}
+    }
+
+    GooglePlaces ..> GoogleRestaurant
+    GoogleRestaurant ..> GoogleLocation
+    GoogleRestaurant ..> GoogleDisplayName
+    GoogleRestaurant ..> EditorialSummary
+    GoogleRestaurant ..> GooglePhotoId
+
+
+}
+
+ namespace SwipeFeast.API.Controllers{
+
+    /'BaseController'/
+    class BaseController{
+        +BaseController(IGroupService groupService, ILogger logger)
+        {Field} -IGroupService _groupService
+        {Field} -ILogger _logger
+    }
+
+    /''/
+    class GroupController extends BaseController{
+        +async Task<IActionResult> CreateGroup([FromBody] GroupCreationDto group)
+        +IActionResult GetGroup([FromRoute] Guid groupId)
+        +IActionResult JoinMember([FromRoute] int joinCode)
+        +IActionResult LeaveMember([FromRoute] Guid groupId)     
+    }
+    
+    /''/
+    class FilterController extends BaseController{
+        +IActionResult Get([FromRoute] Guid groupId)
+        +IActionResult Patch([FromRoute] Guid groupId, [FromBody] List<Filter> filters)
+        +IActionResult GetDefaultFilters()
+    }
+
+    /''/
+    class RestauranteController extends BaseController{
+        +IActionResult GetRestaurants([FromRoute] Guid groupId)
+        +IActionResult GetRestaurant([FromRoute] Guid groupId, [FromRoute] string restaurantId)
+        +IActionResult LikeRestaurant([FromRoute] Guid groupId, [FromRoute] string restaurantId)
+    }
+
+    /''/
+    class RankingController extends BaseController{
+        +IActionResult GetListOfRankings([FromRoute] Guid groupId)
+    }
+
+
+    GroupController ..> SwipeFeast.API.Models.Filter
+    FilterController ..> SwipeFeast.API.Models.Filter
+    RestauranteController ..> SwipeFeast.API.Models.Restaurant
+    RestauranteController ..> SwipeFeast.API.Models.Ranking
+
+    BaseController o-- SwipeFeast.API.Services.IGroupService
+    SwipeFeast.API.Services.IGroupService <|.. SwipeFeast.API.Services.GroupService
+}
+
+namespace SwipeFeast.API.Services{
+
+    interface IGroupService{
+        +Task<Guid> CreateGroup(GroupCreationDto group)
+        +List<Filter> GetFilters(Guid groupId)
+        +SetFilters(Guid groupId, Guid memberId, List<Filter> filters)
+        +IncreaseLikeForRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +List<Restaurant> GetRestaurants(Guid groupId, Guid memberId)
+        +Restaurant GetRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +AddMemberToGroup(int joinCode, Guid memberId)
+        +RemoveMemberFromGroup(Guid groupId, Guid memberId)
+        +GroupExistingDto? GetGroup(Guid groupId)
+        +List<Filter> GetDefaultFilters()
+        +List<Ranking> GetListOfRankings(Guid groupId)
+        +bool IsGroupActive(Guid groupId)
+        +bool IsMemberInGroup(Guid groupId, Guid memberId) 
+    }
+
+    class GroupService <<Singleton>>{
+        {Field} -List<Group> _activeGroups
+        {Field} -IGoogleService _googleService
+        {Field} -Timer _Timer
+
+        + GroupService(IGoogleService googleService)
+        +async Task<Guid> CreateGroup(GroupCreationDto group)
+        +List<Filter> GetFilters(Guid groupId)
+        +async SetFilters(Guid groupId, Guid memberId, List<Filter> filters)
+        +IncreaseLikeForRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +List<Restaurant> GetRestaurants(Guid groupId, Guid memberId)
+        +Restaurant GetRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +AddMemberToGroup(int joinCode, Guid memberId)
+        +RemoveMemberFromGroup(Guid groupId, Guid memberId)
+        +GroupExistingDto? GetGroup(Guid groupId)
+        +List<Filter> GetDefaultFilters()
+        +List<Ranking> GetListOfRankings(Guid groupId)
+        +bool IsGroupActive(Guid groupId)
+        +bool IsMemberInGroup(Guid groupId, Guid memberId)
+        -CleanupExpiredGroups(object? state)
+        -int CreateJoinCode(int startValue, int endValue) 
+
+    }
+
+    IGroupService ..> SwipeFeast.API.Models.GroupCreationDto
+    IGroupService ..> SwipeFeast.API.Models.Filter
+    GroupService o-- IGoogleService
+    IGoogleService <|.. GoogleService
+    IGoogleService ..> SwipeFeast.API.Models.GooglePlaces
+
+
+    interface IGoogleService{
+        +Task<List<Restaurant>> GetRestaurantsFromGoogle(double longitude, latitude, int LocationRange, List<Filter> filters)
+    }
+    
+    /''/
+    class GoogleService <<Singleton>>{
+        {static} -List<Filter> defaultFilters
+
+        +async Task<List<Restaurant>> GetRestaurantsFromGoogle(double longitude, latitude, int LocationRange, List<Filter> filters)
+        {static} +List<Filter> GetDefaultFilters()
+        {static} -async Task<List<string>> GetPhotoUrls(List<GooglePhotoId> googlePhotoIds, int maxHeight, int maxWidth)
+        {static} -bool IsFilterListValid(List<Filter> filters)
+        {static} -bool TryGetGoogleApiToken(out string googleApiToken)
+    }
+   
+}
+@enduml

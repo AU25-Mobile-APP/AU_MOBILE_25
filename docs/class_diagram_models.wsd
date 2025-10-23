@@ -1,0 +1,118 @@
+@startuml
+skinparam linetype ortho
+hide empty members
+'skinparam groupInheritance 2
+
+
+namespace SwipeFeast.API.Models {
+
+    /'Domain Model REstaurant'/
+    class Restaurant<<(D,orchid)>>{
+        +string Id {get; set;}
+        +string Name {get; set;}
+        +string Description {get; set;}
+        +float Rating {get; set;}
+        +List<Filter> Suitable {get; set;}
+        +string NavigationUrl {get; set;}
+        +List<string> PhotoUrls {get; set;}
+    }
+
+
+    /'Domain Model Filter'/
+    class Filter<<(D,orchid)>>{
+        +string Id {get; set;}
+        +bool Active {get; set;}
+    }
+
+    /'Domain Model Group'/
+    class Group<<(D,orchid)>>{
+        +Guid Id {get; set;}
+        +int JoinCode {get; set;}
+        +string Name {get; set;}
+        +double Latitude {get; set;}
+        +double Longitude {get; set;}
+        +int LocationRange {get; set;}
+        +List<Filter> Filters {get; set;}
+        +List<Ranking> Rankings {get; set;}
+        +List<Restaurant> Restaurants {get; set;}
+        +List<Guid> Members {get; set;}
+        +DateTime ExpirationDate {get; set;}
+    }
+
+    /'Domain Model Ranking'/
+    class Ranking<<(D,orchid)>>{
+        +string RestaurantId {get;set;}
+        +string RestaurantName {get;set;}
+        +int LikesCount {get; set;}
+        +List<Guid> Members {get; set;}
+    }
+
+    Group ..> Filter
+    Group ..> Ranking
+    Group ..> Restaurant
+
+
+    /'Data Transfer Object for Group Creation'/
+    class GroupCreationDto<<(D,#FF7700)>> {
+        +string Name {get; set;}
+        +double Latitude {get; set;}
+        +double Longitude {get; set;}
+        +int LocationRange {get; set;}
+        +List<Filter> Filters {get; set;}
+    }
+
+    /'Extends GroupCreationDto'/
+    class GroupExistingDto<<(D,#FF7700)>> extends GroupCreationDto{
+        +DataTime ExpirationDate {get; set;}
+        +int JoinCode {get; set;}
+     }
+
+    GroupCreationDto ..> Filter
+    /'data model from google API'/
+    class GooglePlaces<<(D,orchid)>>{
+        + GoogleRestaurant[] places {get; set;}
+    }
+
+    class GoogleRestaurant<<(D,orchid)>>{
+        +string id {get; set;}
+        +GoogleLocation location {get; set;}
+        +List<string> types {get; set;}
+        +float rating {get; set;}
+        +GoogleDisplayName displayName {get; set;}
+        +string GoogleMapsUri {get; set;}
+        +EditorialSummary editorialSummary {get; set;}
+        +List<GooglePhotoId> photos {get; set;}
+    }
+
+    class GoogleLocation<<(D,orchid)>>{
+        + double latitude {get; set;}
+        + double longitude {get; set;}
+    }
+
+    class GoogleDisplayName<<(D,orchid)>>{
+        +string text {get; set;}
+        +string languageCode {get; set;}
+    }
+
+    class EditorialSummary<<(D,orchid)>>{
+        +string text {get; set;}
+        +string languageCode {get; set;}
+    }
+
+    class GooglePhotoId<<(D,orchid)>>{
+        +string name {get; set;}
+        +int widthPx {get; set;}
+        +int heightPx {get; set;}
+    }
+
+    GooglePlaces ..> GoogleRestaurant
+    GoogleRestaurant ..> GoogleLocation
+    GoogleRestaurant ..> GoogleDisplayName
+    GoogleRestaurant ..> EditorialSummary
+    GoogleRestaurant ..> GooglePhotoId
+
+
+}
+
+
+@enduml

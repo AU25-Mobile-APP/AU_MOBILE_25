@@ -1,0 +1,32 @@
+@startuml
+title join group
+
+participant GroupController as ":GroupController"
+participant GroupService [
+                                1
+    :GroupService
+]
+Note over GroupService: GroupService is a service to manage active groups.\nGroups are stored in a field inside the service
+participant Group as "groups:\nList<Group>"
+activate Group
+activate GroupService
+
+-> GroupController: POST: domain/api/v1/groups/{joinCode}/join
+activate GroupController
+GroupController -> GroupController: Create Cookie with memberId
+GroupController -> GroupService: AddMemberToGroup(joinCode, memberId)
+activate GroupService
+GroupService -> Group: FirstOrDefault(joinCode)
+activate Group
+Group --> GroupService: Return Group
+GroupService -> Group: AddMember(memberId)
+Group --> GroupService: Return Group
+deactivate Group
+GroupService --> GroupController: Return groupId
+    Note left of GroupService: can throw:\nGroupNotFoundException
+deactivate GroupService
+<-- GroupController: OK: Cookie and groupId
+    Note left of GroupController: when exception is thrown\nreturn 404: NotFound
+deactivate GroupController
+
+@enduml

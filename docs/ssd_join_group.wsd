@@ -1,0 +1,10 @@
+@startuml
+title join group
+
+Actor user as ":actor"
+participant system as ":system"
+
+user -> system: POST: domain/api/v1/groups/{joinCode}/join
+    note right of user: user join with joinCode
+system --> user: OK: cookie and groupId
+@enduml

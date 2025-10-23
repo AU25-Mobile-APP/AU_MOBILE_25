@@ -1,0 +1,8 @@
+{
+  "required": "{field} ist ein Pflichtfeld",
+  "min_value": "{field} muss mindestens {'0:{min}'} sein",
+  "max_value": "{field} darf maximal {'0:{max}'} sein",
+  "alpha_num": "{field} darf nur Zahlen, Buchstaben enthalten",
+  "coord": "{field} muss einer Koordinate entsprechen (Bsp. 12.12345)",
+  "digits": "{field} muss  {'0:{length}'} Zahlen enthalten"
+}

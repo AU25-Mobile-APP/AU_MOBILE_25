@@ -1,0 +1,30 @@
+@startuml
+title get ranking
+
+participant RankingController as ":RankingController"
+participant GroupService [
+                                1
+    :GroupService
+]
+Note over GroupService: GroupService is a service to manage active groups.\nGroups are stored in a field inside the service
+participant Group as "groups:\nList<Group>"
+
+activate GroupService
+activate Group
+
+-> RankingController: GET: domain/api/v1/groups/{groupId}/ranking
+    activate RankingController
+RankingController -> GroupService: GetListOfRankings(groupId)
+    activate GroupService
+GroupService -> Group: FirstOrDefault(groupId)
+    activate Group
+Group --> GroupService: Group
+GroupService -> GroupService: Rankings.OrderByDescending()
+Note left of GroupService: can throw:\nGroupNotFoundException
+RankingController <-- GroupService: List<Ranking>
+    deactivate GroupService
+    deactivate Group
+Note left of RankingController:  when exception is thrown\nreturn [404]
+<--RankingController: Ok: List<Ranking>
+    deactivate RankingController
+@enduml

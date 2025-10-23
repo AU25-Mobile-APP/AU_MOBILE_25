@@ -1,0 +1,68 @@
+@startuml
+skinparam linetype ortho
+hide empty members
+'skinparam groupInheritance 2
+
+namespace SwipeFeast.API.Services{
+
+    interface IGroupService{
+        +Task<Guid> CreateGroup(GroupCreationDto group)
+        +List<Filter> GetFilters(Guid groupId)
+        +SetFilters(Guid groupId, Guid memberId, List<Filter> filters)
+        +IncreaseLikeForRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +List<Restaurant> GetRestaurants(Guid groupId, Guid memberId)
+        +Restaurant GetRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +AddMemberToGroup(int joinCode, Guid memberId)
+        +RemoveMemberFromGroup(Guid groupId, Guid memberId)
+        +GroupExistingDto? GetGroup(Guid groupId)
+        +List<Filter> GetDefaultFilters()
+        +List<Ranking> GetListOfRankings(Guid groupId)
+        +bool IsGroupActive(Guid groupId)
+        +bool IsMemberInGroup(Guid groupId, Guid memberId) 
+    }
+
+    class GroupService <<Singleton>>{
+        {Field} -List<Group> _activeGroups
+        {Field} -IGoogleService _googleService
+        {Field} -Timer _Timer
+
+        + GroupService(IGoogleService googleService)
+        +async Task<Guid> CreateGroup(GroupCreationDto group)
+        +List<Filter> GetFilters(Guid groupId)
+        +async SetFilters(Guid groupId, Guid memberId, List<Filter> filters)
+        +IncreaseLikeForRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +List<Restaurant> GetRestaurants(Guid groupId, Guid memberId)
+        +Restaurant GetRestaurant(Guid groupId, Guid memberId, string restaurantId)
+        +AddMemberToGroup(int joinCode, Guid memberId)
+        +RemoveMemberFromGroup(Guid groupId, Guid memberId)
+        +GroupExistingDto? GetGroup(Guid groupId)
+        +List<Filter> GetDefaultFilters()
+        +List<Ranking> GetListOfRankings(Guid groupId)
+        +bool IsGroupActive(Guid groupId)
+        +bool IsMemberInGroup(Guid groupId, Guid memberId)
+        -CleanupExpiredGroups(object? state)
+        -int CreateJoinCode(int startValue, int endValue) 
+
+    }
+    IGroupService <|.. GroupService
+    GroupService o-- IGoogleService
+    IGoogleService <|.. GoogleService
+
+
+    interface IGoogleService{
+        +Task<List<Restaurant>> GetRestaurantsFromGoogle(double longitude, latitude, int LocationRange, List<Filter> filters)
+    }
+    
+    /''/
+    class GoogleService <<Singleton>> {
+        {static} -List<Filter> defaultFilters
+
+        +async Task<List<Restaurant>> GetRestaurantsFromGoogle(double longitude, latitude, int LocationRange, List<Filter> filters)
+        {static} +List<Filter> GetDefaultFilters()
+        {static} -async Task<List<string>> GetPhotoUrls(List<GooglePhotoId> googlePhotoIds, int maxHeight, int maxWidth)
+        {static} -bool IsFilterListValid(List<Filter> filters)
+        {static} -bool TryGetGoogleApiToken(out string googleApiToken)
+    }
+   
+}
+@enduml

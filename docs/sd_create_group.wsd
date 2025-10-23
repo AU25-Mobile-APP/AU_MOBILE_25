@@ -1,0 +1,83 @@
+@startuml 
+title Create a group
+
+participant GroupController as ":GroupController"
+participant GroupeDTO as ":GroupeCreationDto"
+participant GroupService [
+                                1
+    :GroupService
+]
+Note over GroupService: GroupService is a service to manage active groups.\nGroups are stored in a field inside the service
+participant Group as ":groups[i]: Group"
+participant GoogleService[
+                                1
+    :GoogleService
+]
+participant GooglePlaceAPI as "GooglePlaceAPI"
+
+activate GroupService
+activate GoogleService
+
+-> GroupController: POST: domain/api/v1/groups\ncreateGroup([FromBody] GroupeCreationDto)
+    Note left of GroupController: request body:\n "name": "string",\n "latitude": 90, \n "longitude": 180, \n "locationRange": 10000, \n "filters": []
+activate GroupController
+
+'' Input and Validation
+create GroupeDTO
+GroupController -> GroupeDTO: map the request body
+activate GroupeDTO
+GroupeDTO -> GroupController: return the mapped object
+
+GroupController -> GroupController: validate the input\n [groupCreationDto] 
+    Note right of GroupController: The filterlist will be validated\n in the GoogleService
+
+
+'' Create the group in group service
+GroupController -> GroupService: CreateGroup(groupCreationDto)
+activate GroupService
+GroupService -> GoogleService: GetRestaurantsFromGoogle\n(Longitude, Latitude, LocationRange, Filters)
+    Note right of GoogleService: Get the list of restaurants\nvia Google API
+deactivate GroupeDTO
+
+activate GoogleService
+GoogleService -> GoogleService: validate the filters
+
+'' Get the list of restaurants via Google API
+GoogleService -> GooglePlaceAPI: POST: https://places.googleapis.com/v1/places:searchNearby
+activate GooglePlaceAPI
+GooglePlaceAPI -->> GoogleService: OK: list of restaurants
+deactivate GooglePlaceAPI
+GoogleService -> GoogleService: new List<Restaurant>()
+GoogleService -> GoogleService: Add the list of restaurants from Google API
+
+'' Create new restaurant Objects and add the list of restaurants from Google API
+loop for each restaurant
+    GoogleService -> GooglePlaceAPI: POST: https://places.googleapis.com/v1/media
+    activate GooglePlaceAPI
+    GooglePlaceAPI -->> GoogleService: OK: list of photo urls
+    deactivate GooglePlaceAPI
+end
+GoogleService -->> GroupService: list of restaurants
+deactivate GoogleService
+
+GroupService -> GroupService: Add new ranking list to the group
+create Group
+GroupService -> Group: add new Group()
+activate Group
+    Note right of Group: Add Details to the group\nand list of restaurants
+Note left of GroupService: can throw:\nGroupNotFoundException,\nNoRestaurantsFoundException, \nFilterInvalidException
+GroupService -->> GroupController: group id
+deactivate GroupService
+
+GroupController -> GroupController: Create a cookie
+GroupController -> GroupService: AddMemberToGroup(memberId, groupId)
+activate GroupService
+GroupService -> Group: AddMemberToGroup(groupId, memberId)
+deactivate GroupService 
+Note left of GroupController: when exception is thrown\nreturn [400, 404]
+<<-- GroupController: OK: groupId and cookie memberId
+deactivate GroupController
+deactivate GroupService
+deactivate GoogleService
+
+@enduml

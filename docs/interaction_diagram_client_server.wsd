@@ -1,0 +1,17 @@
+@startuml
+skinparam linetype ortho
+
+
+participant VueJS
+participant ASP.NET
+
+activate VueJS
+
+VueJS -> ASP.NET: HTTP POST /api/v1/groups
+activate ASP.NET
+ASP.NET -> ASP.NET: createGroup
+ASP.NET --> VueJS: Group ID
+deactivate ASP.NET
+
+
+@enduml

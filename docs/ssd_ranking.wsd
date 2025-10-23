@@ -1,0 +1,10 @@
+@startuml
+title get ranking
+
+Actor user as ":actor"
+participant system as ":system"
+
+user -> system: GET: domain/api/v1/groups/{groupId}/ranking
+note left of system:sorted list of ranked restaurants\nby descending order of votes 
+system --> user: OK: list of ranking 
+@enduml

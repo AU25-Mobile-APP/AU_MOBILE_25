@@ -1,0 +1,59 @@
+@startuml
+title like a restaurant
+
+participant RestaurantController as ":RestaurantController"
+participant GroupService [
+                                1
+    :GroupService
+]
+Note over GroupService: GroupService is a service to manage active groups.\nGroups are stored in a field inside the service
+participant Group as "groups:\nList<Group>"
+
+activate GroupService
+activate Group
+''Get a List of Restaurants from a Group
+-> RestaurantController: GET: domain/api/v1/groups/{groupId}/restaurants
+    Note left of RestaurantController: Cookie with memberId
+activate RestaurantController
+RestaurantController -> GroupService: GetRestaurants(groupId, memerId)
+activate GroupService
+GroupService -> Group: group.FirstOrDefault(groupId)
+activate Group
+Group --> GroupService: Group
+GroupService -> GroupService: is member in group
+RestaurantController <-- GroupService: List<Restaurant>
+deactivate Group
+deactivate GroupService
+    Note left of GroupService: can throw:\nGroupNotFoundException,\nMemberNotFoundException
+    Note left of RestaurantController: when exception is thrown\nreturn [400, 404]
+<-- RestaurantController: OK: List<Restaurant>
+
+
+deactivate RestaurantController
+
+
+''Set a like to a Restaurant
+-> RestaurantController: POST: domain/api/v1/groups/{groupId}/restaurants/{restaurantId}/like
+    Note left of RestaurantController: Cookie with memberId
+activate RestaurantController
+RestaurantController -> RestaurantController: Validate groupId, restaurantId and cookie not null
+
+RestaurantController -> GroupService: IncreaseLikeForRestaurant(groupId, restaurantId, memberId)
+activate GroupService
+
+    Note right of Group: Group has a list of sub objects of type Ranking\nwhich each have a RestaurantId, LikeCount and\na list of MemberIds that have liked the restaurant
+GroupService -> Group: group.FirstOrDefault(groupId)
+activate Group
+Group --> GroupService: Group
+GroupService -> Group: group.ranking.FirstOrDefault(restaurantId)
+Group --> GroupService: Ranking
+GroupService -> Group: ranking.MemberId.Add(memberId)
+GroupService -> Group: ranking.LikeCount +=1
+deactivate Group
+    Note left of GroupService: can throw:\nGroupNotFoundException,\nRestaurantNotFoundException,\nMemberNotFoundException
+GroupService --> RestaurantController:
+deactivate GroupService
+    Note left of RestaurantController: when exception is thrown\nreturn [400, 401, 404]
+<-- RestaurantController: OK
+deactivate RestaurantController
+@enduml

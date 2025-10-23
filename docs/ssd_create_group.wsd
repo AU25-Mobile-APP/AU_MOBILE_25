@@ -1,0 +1,10 @@
+@startuml
+title create group
+
+Actor user as ":actor"
+participant system as ":system"
+
+user -> system: POST: domain/api/v1/groups
+Note right of user: request body:\n "name": "string",\n "latitude": 90, \n "longitude": 180, \n "locationRange": 10000, \n "filters": []
+system --> user: OK: group id and cookie
+@enduml

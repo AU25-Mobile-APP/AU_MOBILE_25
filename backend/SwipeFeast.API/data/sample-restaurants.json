@@ -1,0 +1,223 @@
+{
+    "places": [
+      {
+        "id": "ChIJh0YbpneZmkcR7ahiM3yxsv8",
+        "types": [
+          "restaurant",
+          "fast_food_restaurant",
+          "hamburger_restaurant",
+          "cafe",
+          "american_restaurant",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.4990372,
+          "longitude": 8.7245645
+        },
+        "rating": 3.5,
+        "googleMapsUri": "https://maps.google.com/?cid=18424984172522285293",
+        "displayName": {
+          "text": "McDonald’s",
+          "languageCode": "en"
+        }
+      },
+      {
+        "id": "ChIJXc8DY52ZmkcRsyzwe-pWGLI",
+        "types": [
+          "cafe",
+          "bar",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.498911,
+          "longitude": 8.7272916
+        },
+        "rating": 4.3,
+        "googleMapsUri": "https://maps.google.com/?cid=12833102703293902003",
+        "displayName": {
+          "text": "Kafisatz Bar Café Press",
+          "languageCode": "en"
+        }
+      },
+      {
+        "id": "ChIJxzh7eneZmkcRse02aQLRUX4",
+        "types": [
+          "coffee_shop",
+          "cafe",
+          "store",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.500168599999995,
+          "longitude": 8.723822199999999
+        },
+        "rating": 3.9,
+        "googleMapsUri": "https://maps.google.com/?cid=9102286130177830321",
+        "displayName": {
+          "text": "Starbucks",
+          "languageCode": "en"
+        }
+      },
+      {
+        "id": "ChIJ0dPgdHeZmkcR8nNMrUZQtEQ",
+        "types": [
+          "mediterranean_restaurant",
+          "banquet_hall",
+          "brunch_restaurant",
+          "cafe",
+          "event_venue",
+          "bar",
+          "restaurant",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.4997246,
+          "longitude": 8.7241413
+        },
+        "rating": 4.2,
+        "googleMapsUri": "https://maps.google.com/?cid=4950670154872419314",
+        "displayName": {
+          "text": "Restaurant National",
+          "languageCode": "de"
+        }
+      },
+      {
+        "id": "ChIJ0dhHLHeZmkcRMZpkam8BH0g",
+        "types": [
+          "coffee_shop",
+          "gift_shop",
+          "cafe",
+          "store",
+          "restaurant",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.499108500000006,
+          "longitude": 8.7214238
+        },
+        "rating": 4.3,
+        "googleMapsUri": "https://maps.google.com/?cid=5196874073046817329",
+        "displayName": {
+          "text": "Gottlieber Sweets & Coffee Winterthur",
+          "languageCode": "de"
+        }
+      },
+      {
+        "id": "ChIJA3amhXeZmkcRnNAkQcuVVwE",
+        "types": [
+          "bar",
+          "brunch_restaurant",
+          "cafe",
+          "restaurant",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.5004369,
+          "longitude": 8.7251051
+        },
+        "rating": 4.6,
+        "googleMapsUri": "https://maps.google.com/?cid=96710617215586460",
+        "displayName": {
+          "text": "Coalmine Bar & Café",
+          "languageCode": "en"
+        }
+      },
+      {
+        "id": "ChIJzcQ5O52ZmkcRf1_PIBS68CU",
+        "types": [
+          "cafe",
+          "breakfast_restaurant",
+          "store",
+          "restaurant",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.4997998,
+          "longitude": 8.7249451999999987
+        },
+        "rating": 4,
+        "googleMapsUri": "https://maps.google.com/?cid=2733889569426464639",
+        "displayName": {
+          "text": "Vollenweider Chocolatier Confiseur + Café",
+          "languageCode": "en"
+        }
+      },
+      {
+        "id": "ChIJc13o_MyZmkcR146SC0hYY1g",
+        "types": [
+          "restaurant",
+          "night_club",
+          "cafe",
+          "bar",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.498417100000005,
+          "longitude": 8.724072
+        },
+        "rating": 4.2,
+        "googleMapsUri": "https://maps.google.com/?cid=6369031364487057111",
+        "displayName": {
+          "text": "ASIAWAY RESTAURANT WINTERTHUR",
+          "languageCode": "de"
+        }
+      },
+      {
+        "id": "ChIJaZ3wAXeZmkcRr355F0TLuV8",
+        "types": [
+          "bar",
+          "night_club",
+          "cafe",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.4985462,
+          "longitude": 8.7233495
+        },
+        "rating": 3.9,
+        "googleMapsUri": "https://maps.google.com/?cid=6897767797606678191",
+        "displayName": {
+          "text": "Arch Bar",
+          "languageCode": "de"
+        }
+      },
+      {
+        "id": "ChIJ03eBLg6FmkcRZrX6N_DkEY8",
+        "types": [
+          "cafe",
+          "point_of_interest",
+          "food",
+          "establishment"
+        ],
+        "location": {
+          "latitude": 47.498402999999996,
+          "longitude": 8.7237028
+        },
+        "rating": 4.5,
+        "googleMapsUri": "https://maps.google.com/?cid=10309272742410237286",
+        "displayName": {
+          "text": "Blumen Café Fany",
+          "languageCode": "de"
+        }
+      }
+    ]
+  }
+  

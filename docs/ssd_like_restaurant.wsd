@@ -1,0 +1,14 @@
+@startuml
+title like a restaurant
+
+Actor user as ":actor"
+participant system as ":system"
+
+user -> system: GET: domain/api/v1/groups/{groupId}/restaurants
+    Note right of user: request to get all restaurants of a group\nwith memberId cookie 
+system --> user: OK: list of restaurants
+loop for each restaurant
+    user -> system: POST: groups/{groupId}/restaurants/{restaurantId}/like
+    system --> user: OK:
+end   
+@enduml

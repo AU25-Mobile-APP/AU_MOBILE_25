@@ -1,0 +1,6 @@
+@SwipeFeast.API_HostAddress = http://localhost:5072
+
+GET {{SwipeFeast.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
