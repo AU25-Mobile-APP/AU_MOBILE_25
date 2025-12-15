@@ -262,7 +262,7 @@ namespace SwipeFeast.API.Services
 						{stringBuilder.ToString()}
 					],
 					""maxResultCount"": 10,
-                    ""languageCode"": ""de"",
+                    ""languageCode"": ""en"",
 					""locationRestriction"": {{
 					""circle"": {{
 						""center"": {{

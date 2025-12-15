@@ -6,22 +6,32 @@ namespace SwipeFeast.API.Models;
 /// <summary>
 /// Represents an input model for registering a user, including first- lastname, mailaddress
 /// </summary>
+using Google.Cloud.Firestore;
+
+[FirestoreData]
 public class RegisterDto
 {
-    [Required]
-    [StringLength(50)]
+    [FirestoreProperty]
+    public string UserUID { get; set; }
+
+    [FirestoreProperty]
     public string FirstName { get; set; }
-    
-    [Required]
-    [StringLength(50)]
+
+    [FirestoreProperty]
     public string LastName { get; set; }
-    
-    [Required]
-    [EmailAddress]
+
+    [FirestoreProperty]
     public string Email { get; set; }
-    
-    [Required]
-    [StringLength(50)]
+
+    [FirestoreProperty]
     public string FavoriteDish { get; set; }
-    
+}
+
+
+public class GroupIDDto
+{
+    [FirestoreProperty]
+    public string UserUID { get; set; }
+    [FirestoreProperty]
+    public string GroupID { get; set; }
 }
