@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SwipeFeast.API.Services;
 
 namespace SwipeFeast.API.Controllers
@@ -9,6 +10,7 @@ namespace SwipeFeast.API.Controllers
 	/// </summary>
 	[Route("api/v1/")]
 	[ApiController]
+	[Authorize]
 	public class BaseController : Controller
 	{
         public readonly ILogger _logger;

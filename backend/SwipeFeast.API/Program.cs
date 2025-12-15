@@ -87,6 +87,30 @@ builder.Services.AddSwaggerGen(
         var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         options.IncludeXmlComments(xmlPath);
+        
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = "JWT Authorization header using the Bearer scheme. Enter either `Bearer {token}` or the raw token.",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
+                    Scheme = "oauth2",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header
+                },
+                new string[] { }
+            }
+        });
     });
 
 builder.Logging.ClearProviders();
@@ -101,13 +125,19 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json","SwipeFeast.API V1"));
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "SwipeFeast.API V1");
+
+        options.ConfigObject.AdditionalItems["persistAuthorization"] = true;
+    });
 }
 
 app.UseCors(corsPolicy);
 
 app.UseCookiePolicy();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
